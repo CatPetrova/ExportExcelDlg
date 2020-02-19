@@ -17,8 +17,7 @@ class AFX_EXT_CLASS ExportExcelDlg : public CDialogEx
 	DECLARE_DYNAMIC(ExportExcelDlg)
 
 public:
-  using ExportCB = std::function<void(ExportExcelDlg *,
-      const std::basic_string<TCHAR> &) >;
+  using ExportCB = std::function<void(ExportExcelDlg *, std::basic_string<TCHAR>)>;
 	ExportExcelDlg(ExportCB *export_cb, CWnd* pParent = NULL);   // 标准构造函数
   ExportExcelDlg(ExportCB *export_cb, const std::basic_string<TCHAR> &def_export_folder, CWnd *pParent = NULL);
 	virtual ~ExportExcelDlg();
@@ -29,6 +28,7 @@ public:
   int GetPos() const;
   void SetPos(const int &pos);
   const std::atomic_bool &IsTerminate() const;
+  CString GetExportFolder() const;
 
 // 对话框数据
 #ifdef AFX_DESIGN_TIME
@@ -53,6 +53,7 @@ private:
   };
   void SetExportBtnStatus();
   void StopExport();
+  void ResetStatus();
   std::basic_string<TCHAR> def_export_folder_;
   ExportStatus export_status_;
   CEdit export_folder_edit_;
@@ -61,4 +62,6 @@ private:
   std::atomic_bool terminate_flag_;
   std::thread *export_thread_;
   CProgressCtrl progress_;
+  int progress_lower_;
+  int progress_upper_;
 };

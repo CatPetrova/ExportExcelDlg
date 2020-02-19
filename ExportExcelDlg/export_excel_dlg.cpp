@@ -23,6 +23,8 @@ ExportExcelDlg::ExportExcelDlg(ExportCB *export_cb, CWnd* pParent /*=NULL*/)
   , export_status_(kStopped)
   , export_thread_(nullptr)
   , terminate_flag_(false)
+  , progress_lower_(0)
+  , progress_upper_(0)
 {
 
 }
@@ -75,7 +77,8 @@ void ExportExcelDlg::Show() {
 }
 
 void ExportExcelDlg::SetRange(const int &lower, const int &upper) {
-  progress_.SetRange(lower, upper);
+  progress_lower_ = lower;
+  progress_upper_ = upper;
 }
 
 void ExportExcelDlg::OnBnClickedBtnOpen()
@@ -149,8 +152,8 @@ BOOL ExportExcelDlg::OnInitDialog()
   }
   export_folder_edit_.SetWindowText(def_export_folder_.c_str());
 
-  export_status_ = kStopped;
-  SetExportBtnStatus();
+  progress_.SetRange(progress_lower_, progress_upper_);
+  ResetStatus();
 
   return TRUE;  // return TRUE unless you set the focus to a control
                 // 异常: OCX 属性页应返回 FALSE
@@ -159,7 +162,7 @@ BOOL ExportExcelDlg::OnInitDialog()
 void ExportExcelDlg::SetExportBtnStatus() {
   switch (export_status_) {
   case kExporting:
-    export_btn_.SetWindowText(_T("正在导出"));
+    export_btn_.SetWindowText(_T("终止"));
     export_btn_.EnableWindow(TRUE);
     break;
   case kStopping:
@@ -183,6 +186,8 @@ afx_msg LRESULT ExportExcelDlg::OnExportComplete(WPARAM wParam, LPARAM lParam)
   CString tip(_T("\0"));
   tip.Format(_T("导出终止，共导出%d条信息。"), static_cast<int>(wParam));
   MessageBox(tip);
+
+  ResetStatus();
   return 0;
 }
 
@@ -192,6 +197,8 @@ afx_msg LRESULT ExportExcelDlg::OnExportTerminate(WPARAM wParam, LPARAM lParam)
   CString tip(_T("\0"));
   tip.Format(_T("导出完成，共导出%d条信息。"), static_cast<int>(wParam));
   MessageBox(tip);
+
+  ResetStatus();
   return 0;
 }
 
@@ -218,6 +225,17 @@ int ExportExcelDlg::GetPos() const{
   return progress_.GetPos();
 }
 
-void ExportExcelDlg::SetPos(const int &pos) {
-  progress_.SetPos(pos);
+void ExportExcelDlg::ResetStatus() {
+  int lower = 0, upper = 0;
+  progress_.GetRange(lower, upper);
+  progress_.SetPos(lower);
+  export_status_ = kStopped;
+  SetExportBtnStatus();
+}
+
+CString ExportExcelDlg::GetExportFolder() const{
+  CString folder(_T("\0"));
+  export_folder_edit_.GetWindowText(folder);
+
+  return folder;
 }
