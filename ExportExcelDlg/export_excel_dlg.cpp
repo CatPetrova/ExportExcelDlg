@@ -6,6 +6,7 @@
 #include "export_excel_dlg.h"
 #include "afxdialogex.h"
 #include "ext_dll_state.h"
+#include <cassert>
 #include <string>
 #include <thread>
 #include <atomic>
@@ -184,7 +185,7 @@ afx_msg LRESULT ExportExcelDlg::OnExportComplete(WPARAM wParam, LPARAM lParam)
 {
   StopExport();
   CString tip(_T("\0"));
-  tip.Format(_T("导出终止，共导出%d条信息。"), static_cast<int>(wParam));
+  tip.Format(_T("导出完成，共导出%d条信息。"), static_cast<int>(wParam));
   MessageBox(tip);
 
   ResetStatus();
@@ -195,7 +196,7 @@ afx_msg LRESULT ExportExcelDlg::OnExportTerminate(WPARAM wParam, LPARAM lParam)
 {
   StopExport();
   CString tip(_T("\0"));
-  tip.Format(_T("导出完成，共导出%d条信息。"), static_cast<int>(wParam));
+  tip.Format(_T("导出终止，共导出%d条信息。"), static_cast<int>(wParam));
   MessageBox(tip);
 
   ResetStatus();
