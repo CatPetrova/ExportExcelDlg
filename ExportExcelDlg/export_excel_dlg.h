@@ -9,8 +9,8 @@
 #include "afxwin.h"
 #include "afxcmn.h"
 
-#define WM_EXPORT_COMPLETE    (WM_APP + 1)
-#define WM_EXPORT_TERMINATE   (WM_APP + 2)
+#define WM_EXPORT_COMPLETE    (WM_APP + 1) //导出完成，WPARAM表示共导出多少条信息
+#define WM_EXPORT_TERMINATE   (WM_APP + 2) //导出终止，WPARAM表示共导出多少条信息
 
 class AFX_EXT_CLASS ExportExcelDlg : public CDialogEx
 {
